@@ -1,37 +1,47 @@
-import React ,{ useState } from "react";
+import React, { useState } from "react";
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
-
 import { CATEGORIES, TASKS } from "../data";
-console.log("Here's the data you're working with");
-console.log({ CATEGORIES, TASKS });
+// console.log("Here's the data you're working with");
+// console.log({ CATEGORIES, TASKS });
 
 function App() {
   const [tasks, setTasks] = useState(TASKS)
-  const [category, setCategory] = useState("All")
+  // const [categories, setCategories] = useState(CATEGORIES)
+  const [category, setCategory] = useState("All");
 
-  function handleDelete(name) {
-    setTasks(tasks.filter((task) => task.text !== name))
-  }
- function handleAdd(items) {
-  setTasks([...tasks, items])
- }
+  // filtering throu tha task and category
+  const filteredTasks = tasks.filter(
+    (task) => category ===  "All" || task.category === category
+  );
 
-console.log(tasks)
+// task remove button
+  const removeTask = (text) => {
+    const newTask = tasks.filter((task) => task.text !== text);
+    console.log(text)
+    setTasks(newTask)
+  };
 
+   function onTaskFormSubmit(newTask) {
+     setTasks([...tasks, newTask]);
+   }
 
-
-  const tasksDisplayed = tasks.filter((task) => category === "All" || task.category === category)
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter categories={CATEGORIES} selected={category} setCategory={setCategory}/>
-      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleAdd}/>
-      <TaskList tasks={tasksDisplayed} handleDelete={handleDelete}/>
+      <CategoryFilter
+        categories={CATEGORIES}
+        category={category}
+        selectCategory={setCategory}
+      />
+      <NewTaskForm
+        categories={CATEGORIES.filter((category) => category !== "All")}
+        onTaskFormSubmit={onTaskFormSubmit}
+      />
+      <TaskList tasks={filteredTasks} removeTask={removeTask} />
     </div>
   );
 }
 
 export default App;
-
